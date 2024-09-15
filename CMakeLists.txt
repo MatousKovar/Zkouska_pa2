@@ -3,5 +3,4 @@ project(Zkouska)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(Zkouska
-         BTS_Tabulka.cpp)
+add_executable(Zkouska Tree.cpp)

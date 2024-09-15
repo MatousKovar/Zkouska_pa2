@@ -46,8 +46,8 @@ cmake_ninja_workdir = /Users/matouskovar/FIT/PA2/Zkouska/cmake-build-debug/
 
 build cmake_object_order_depends_target_Zkouska: phony || CMakeFiles/Zkouska.dir
 
-build CMakeFiles/Zkouska.dir/BTS_Tabulka.cpp.o: CXX_COMPILER__Zkouska_Debug /Users/matouskovar/FIT/PA2/Zkouska/BTS_Tabulka.cpp || cmake_object_order_depends_target_Zkouska
-  DEP_FILE = CMakeFiles/Zkouska.dir/BTS_Tabulka.cpp.o.d
+build CMakeFiles/Zkouska.dir/Tree.cpp.o: CXX_COMPILER__Zkouska_Debug /Users/matouskovar/FIT/PA2/Zkouska/Tree.cpp || cmake_object_order_depends_target_Zkouska
+  DEP_FILE = CMakeFiles/Zkouska.dir/Tree.cpp.o.d
   FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk -fcolor-diagnostics -std=gnu++17
   OBJECT_DIR = CMakeFiles/Zkouska.dir
   OBJECT_FILE_DIR = CMakeFiles/Zkouska.dir
@@ -60,7 +60,7 @@ build CMakeFiles/Zkouska.dir/BTS_Tabulka.cpp.o: CXX_COMPILER__Zkouska_Debug /Use
 #############################################
 # Link the executable Zkouska
 
-build Zkouska: CXX_EXECUTABLE_LINKER__Zkouska_Debug CMakeFiles/Zkouska.dir/BTS_Tabulka.cpp.o
+build Zkouska: CXX_EXECUTABLE_LINKER__Zkouska_Debug CMakeFiles/Zkouska.dir/Tree.cpp.o
   FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk
   OBJECT_DIR = CMakeFiles/Zkouska.dir
   POST_BUILD = :

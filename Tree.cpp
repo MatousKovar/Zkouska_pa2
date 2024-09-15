@@ -73,52 +73,45 @@ public:
     }
 
 
-
-    //TODO tady je neco blbe a nevim co
     bool erase(const string & key) {
-        CNode **head = &m_Root;
-
-        while (*head) {
-            if ((*head)->m_Key == key)
-                break;
-            else if ((*head)->m_Key < key)
-                head = &(*head)->m_R;
-            else
-                head = &(*head)->m_L;
-        }
-        //key not found
-        if (*head == nullptr)
+        if (!m_First)
             return false;
-        if (*head == m_Last)
-            m_Last = (*head)->m_PrevOrder;
-        if (*head == m_First)
-            m_First = (*head)->m_NextOrder;
+        CNode ** head= &m_Root;
+        while (*head)
+        {
+            if ((*head)->m_Key == key)
+            {
+                CNode * toDelete = *head;
+                CNode::SwapOrdering(*head);
+                if(m_First == *head) m_First = m_First->m_NextOrder;
+                if(m_Last == *head) m_Last = m_Last->m_PrevOrder;
 
-        CNode::SwapOrdering(*head);
-        //no children
-        if (!(*head)->m_L && !(*head)->m_R) {
-            if(*head == m_Root)
-                m_Root = nullptr;
-            delete *head;
+                if ((*head)->m_L && (*head)->m_R)
+                {
+                    head = &(*head)->m_R;
+                    while((*head)->m_L)
+                        head = &(*head)->m_L;
+                    toDelete -> m_Key = (*head)->m_Key;
+                    toDelete = *head;
+                }
+                if ( toDelete -> m_L )
+                {
+                    *head = toDelete->m_L;
+                }
+                else
+                {
+                    *head = toDelete->m_R;
+                }
+                toDelete ->m_L = toDelete->m_R = nullptr;
+                delete toDelete;
+                return true;
+            }
+            else if ( (*head)->m_Key > key)
+                head = &(*head)->m_L;
+            else
+                head = &(*head)->m_R;
         }
-        //has two children
-        else if ((*head)->m_L && (*head)->m_R) {
-            //find next bigger element
-            CNode *tmp = (*head)->m_R;
-            while (tmp->m_L)
-                tmp = tmp->m_L;
-            swap(tmp, *head);
-            if(tmp == m_Root)
-                m_Root = *head;
-            delete tmp;
-        } else {
-            CNode *tmp = (*head)->m_R ? (*head)->m_R : (*head)->m_L;
-            swap(tmp, *head);
-            if(tmp == m_Root)
-                m_Root = *head;
-            delete tmp;
-        }
-        return true;
+        return false;
     }
 
 protected:
@@ -127,6 +120,7 @@ protected:
     public:
         CNode(string key) : m_Key(key) {}
 
+        ~CNode() {delete m_L; delete m_R;}
         string m_Key;
         CNode *m_L = nullptr;
         CNode *m_R = nullptr;

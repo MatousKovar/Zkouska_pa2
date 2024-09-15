@@ -1,30 +1,7 @@
 /**
  *@author Matouš Kovář <kovarm46@fit.cvut.cz>
- *@date 6/13/23
+ *@date 6/14/23
  */
-
-/**
- * Vytvořte tabulku (mapu) za použití binárních vyhledávacích stromů bez vyvažování, klíčem i hodnotou je string. Umístění prvku
- * ve stromu se odvozuje z lexikografického řazení klíčů (operator <). Konstruktor implementovaný od Ládi, kopírující konstruktor
- * ani operátor přiřazení není nutno implementovat. Tabulka umožňuje vkládat prvky (vaše implementace) a navíc uchovávat pořadí jejich vložení.
- * K tomu slouží ukazatel m_nextOrder v instanci CNode (tvoří spojový seznam) a ukazatele m_first, m_last v CTree.
-
- * Ukládaná data ve třídách:
-
- * CNode(string m_key, string m_val, CNode* m_L, CNode* m_R, CNode* m_nextOrder);
-
- * CTree(CNode* m_first, CNode* m_last, CNode* m_root);
-
- * Potřeba implementovat:
-    destruktor
-    bool insert(key, val)… vloží prvek na správné místo ve stromu, vrátí true v případě úspěchu (klíč ještě není ve stromu obsažen)
-    bool isSet(key)… vrátí true pro obsažený klíč
-    operator «… výpis párů (klíč, hodnota) podle pořadí vložení do tabulky
-
- */
-
-// Vse ok, mem leaky nejsou, zkontrolovano s valgrindem
-
 #include<iostream>
 #include<string>
 #include<cassert>
@@ -37,26 +14,23 @@ public:
     CTree(const CTree & src) = delete;
     CTree & operator = (const CTree & src) = delete;
     ~CTree(){
-        if ( !m_Root)
-            return;
         CNode * head = m_First;
-
         while ( head )
         {
-            CNode * tmp = head->m_NextOrder;
-            delete head;
-            head = tmp;
+            CNode * tmp = head;
+            head = head->m_NextOrder;
+            delete tmp;
         }
     }
     bool isSet(const string & key){
-        if(! m_Root)
+        if ( !m_First)
             return false;
         CNode ** head = &m_Root;
-        while (*head)
+        while(*head)
         {
-            if((*head)->m_Key == key)
+            if ((*head)->m_Key == key)
                 return true;
-            else if((*head)->m_Key > key)
+            else if ((*head)->m_Key > key)
                 head = &(*head)->m_L;
             else
                 head = &(*head)->m_R;
@@ -64,10 +38,10 @@ public:
         return false;
     }
     bool insert(const string & key, const string & val){
-        if ( !m_Root )
+        if ( ! m_First)
         {
-            m_Root = new CNode(key,val);
-            m_First = m_Last = m_Root;
+            m_First = new CNode (key,val);
+            m_Last = m_Root = m_First;
             return true;
         }
         CNode ** head = &m_Root;
@@ -75,31 +49,32 @@ public:
         {
             if ( (*head)->m_Key == key)
                 return false;
-            else if ( (*head)->m_Key > key)
+            else if ( (*head) -> m_Key > key)
+            {
                 head = &(*head)->m_L;
+            }
             else
                 head = &(*head)->m_R;
         }
-
-        *head = new CNode (key, val);
-        m_Last ->m_NextOrder  = *head;
-        m_Last = *head;
+        *head = new CNode ( key, val);
+        m_Last -> m_NextOrder = *head;
+        m_Last = * head;
         return true;
     }
     friend ostream & operator << (ostream & os, const CTree & src){
-        os << "{";
-        CNode * head = src.m_Root;
+        CNode * head = src.m_First;
         bool first = true;
-        while ( head )
+        os << "{";
+        while (head)
         {
-            if (! first )
-                os<< ", ";
-            first = false;
+            if ( !first)
+                os << ", ";
             os << head->m_Key << " => " << head->m_Val;
+            first = false;
             head = head->m_NextOrder;
         }
-        os << "}";
-        return os;
+        return os << "}";
+
     }
 protected:
     class CNode{
@@ -129,7 +104,6 @@ int main(void){
     assert(t.insert("PA2", "fail"));
     assert(t.insert("UOS", "funny"));
 
-    cout << t << endl;
     ss << t;
     assert(ss.str() == "{PA1 => done, PA2 => fail, UOS => funny}");
     ss.clear();
